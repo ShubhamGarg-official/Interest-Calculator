@@ -1,9 +1,18 @@
 import streamlit as st
 from datetime import datetime
 
-st.set_page_config(page_title="Interest Calculator", page_icon="📊")
-st.title("💰 Income Tax Interest Calculator")
-st.write("1% per month or part thereof")
+st.set_page_config(page_title="TDS Interest Calculator", page_icon="💼")
+st.title("💼 Income Tax Interest Calculator")
+st.write("Select the type of delay:")
+
+# Select interest type
+option = st.selectbox(
+    "Choose delay type:",
+    ("Late Deduction of TDS (1% per month)", "Late Payment of TDS (1.5% per month)")
+)
+
+# Set interest rate
+interest_rate = 0.01 if "Deduction" in option else 0.015
 
 # Input Section
 amount = st.number_input("Enter the amount (₹)", value=10000.0)
@@ -16,11 +25,13 @@ if payment_date > due_date:
     if payment_date.day > due_date.day:
         months += 1
     else:
-        months += 1  # Even 1 day late = full month
+        months += 1  # Always full month for any delay
 
-    interest = amount * 0.01 * months
+    interest = amount * interest_rate * months
+
+    st.subheader("📊 Result:")
     st.success(f"📅 Delay: {months} month(s)")
-    st.success(f"💸 Interest Payable: ₹{interest:.2f}")
+    st.success(f"💸 Interest Payable @ {interest_rate*100:.1f}%: ₹{interest:.2f}")
 elif payment_date == due_date:
     st.info("✅ Paid on time. No interest.")
 else:
